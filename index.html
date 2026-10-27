@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Origins & Advanced Civilizations</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        glossCyan: '#00f3ff',
+                        glossMagenta: '#ff00d4',
+                        glossPurple: '#7000ff',
+                        spaceDark: '#020205',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base & Resets */
+        body {
+            background-color: #020205;
+            color: #f8fafc;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --------------------------------------
+           Liquid Gloss & Glassmorphism Utilities 
+           -------------------------------------- */
+        
+        .liquid-glass {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4),
+                inset 0 -1px 10px rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            transform: rotate(45deg);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .liquid-glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.7),
+                0 0 50px rgba(0, 243, 255, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        /* --------------------------------------
+           Typography & Glows
+           -------------------------------------- */
+        .text-gloss {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #00f3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glow-title {
+            text-shadow: 0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(0,243,255,0.4), 0 0 80px rgba(112,0,255,0.3);
+        }
+
+        /* --------------------------------------
+           Apple-like Scroll Animations (Reveal)
+           -------------------------------------- */
+        .reveal-wrapper {
+            perspective: 1200px;
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9) translateY(50px);
+            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .reveal-stagger > * {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal-stagger.active > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.active > *:nth-child(2) { transition-delay: 0.25s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.active > *:nth-child(3) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.active > *:nth-child(4) { transition-delay: 0.55s; opacity: 1; transform: translateY(0); }
+
+        /* --------------------------------------
+           Content Styling
+           -------------------------------------- */
+        .content-body p {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        .content-body h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.75rem;
+            color: #fff;
+            margin-top: 3.5rem;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .content-body strong {
+            color: #00f3ff;
+            font-weight: 500;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+
+        /* --------------------------------------
+           Scrollbar & ThreeJS Canvas
+           -------------------------------------- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #020205; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f3ff; }
+
+        #three-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        /* Ambient Background Glows */
+        .bg-glow {
+            position: fixed;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(112,0,255,0.05) 0%, transparent 60%);
+        }
+    </style>
+</head>
+<body class="selection:bg-glossCyan selection:text-black">
+
+    <!-- WebGL Deep Space Flight Background -->
+    <canvas id="three-canvas"></canvas>
+    <div class="bg-glow"></div>
+
+    <!-- Liquid Gloss Navbar -->
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-6xl" id="navbar">
+        <div class="liquid-glass rounded-full px-8 py-4 flex justify-between items-center bg-opacity-20">
+            <a href="#hero" class="font-display font-black text-xl tracking-[0.2em] text-white">
+                V<span class="text-glossCyan">O</span>ID
+            </a>
+            <div class="hidden lg:flex space-x-8 font-sans text-xs font-semibold uppercase tracking-widest text-gray-300">
+                <a href="#big-bang" class="hover:text-white transition-colors duration-300">Big Bang</a>
+                <a href="#earth" class="hover:text-white transition-colors duration-300">Earth</a>
+                <a href="#dark" class="hover:text-white transition-colors duration-300">Darkness</a>
+                <a href="#fermi" class="hover:text-white transition-colors duration-300">Fermi</a>
+                <a href="#kardashev" class="hover:text-white transition-colors duration-300">Scale</a>
+                <a href="#megastructures" class="hover:text-white transition-colors duration-300">Structures</a>
+                <a href="#endgame" class="hover:text-white transition-colors duration-300">Endgame</a>
+                <a href="#observatory" class="hover:text-glossCyan transition-colors duration-300">Gallery</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SPACER FOR EXTRA SCROLLING -->
+    <main class="relative z-10 w-full flex flex-col items-center">
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="min-h-screen flex flex-col justify-center items-center w-full px-4 text-center relative reveal-wrapper">
+            <div class="reveal-scale active max-w-6xl mt-20">
+                <div class="inline-block liquid-glass rounded-full px-6 py-2 mb-8">
+                    <span class="font-sans text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-glossCyan">
+                        Scroll to traverse the cosmos
+                    </span>
+                </div>
+                <h1 class="font-display text-6xl md:text-8xl lg:text-[7rem] font-black mb-6 leading-[1.1] text-white glow-title">
+                    The Infinite <br /> <span class="text-gloss">Horizon</span>
+                </h1>
+                <p class="font-sans text-lg md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mt-8 font-light opacity-80">
+                    A deep-dive research into the violent genesis of the universe, the delicate anomaly of a living Earth, and the haunting implications of advanced civilizations.
+                </p>
+                
+                <!-- Scroll Indicator -->
+                <div class="mt-24 flex flex-col items-center justify-center opacity-60 hover:opacity-100 transition-opacity cursor-pointer animate-bounce">
+                    <span class="text-xs uppercase tracking-widest mb-2 font-semibold">Initiate Warp</span>
+                    <div class="w-[2px] h-20 bg-gradient-to-b from-glossCyan to-transparent"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADDING MARGINS FOR LONG SCROLL EFFECTS -->
+        <div class="h-32 w-full"></div>
+
+        <!-- SECTION 1: BIG BANG -->
+        <section id="big-bang" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24">
+                <div class="flex flex-col lg:flex-row gap-16">
+                    <div class="lg:w-5/12 reveal-stagger">
+                        <h4 class="text-glossCyan font-semibold tracking-[0.2em] uppercase text-sm mb-4">Phase I</h4>
+                        <h2 class="font-display text-5xl md:text-7xl font-black text-white mb-6 leading-tight">The <br>Genesis <br>Event</h2>
+                        <div class="h-[2px] w-24 bg-gradient-to-r from-glossCyan to-transparent mb-8"></div>
+                        <div class="liquid-glass p-8 rounded-3xl mt-12 bg-white/5">
+                            <p class="font-sans text-gray-400 italic text-sm leading-relaxed m-0">
+                                "The cosmos is all that is or ever was or ever will be. Our feeblest contemplations of the Cosmos stir us... we know we are approaching the greatest of mysteries."
+                                <br><br>— Carl Sagan
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lg:w-7/12 content-body">
+                        <p>
+                            Approximately <strong>13.8 billion years ago</strong>, the conceptual framework of reality itself did not exist. The entirety of space, time, matter, and energy was compressed into an infinitely dense, unimaginably hot point known as a <em>singularity</em>. The metric expansion of space from this state is what we term the Big Bang. 
+                        </p>
+                        <p>
+                            In the initial infinitesimal fraction of a second ($10^{-36}$ seconds), the universe underwent <strong>Cosmic Inflation</strong>. Space expanded faster than the speed of light, smoothing out quantum fluctuations and establishing the macroscopic uniformity we observe in the cosmos today. Without this rapid expansion, gravity would have caused an immediate collapse back into a singularity.
+                        </p>
+                        <h3>The Primordial Soup and Recombination</h3>
+                        <p>
+                            Following inflation, the universe was a chaotic, opaque <em>quark-gluon plasma</em>. Temperatures were so extreme that protons and neutrons could not form. As expansion continued and temperatures dropped, quarks bound together to form the first hadrons. 
+                        </p>
+                        <p>
+                            It took nearly 380,000 years for the universe to cool sufficiently to allow electrons to bind to nuclei, forming the first neutral atoms (predominantly Hydrogen, with trace Helium and Lithium). This epoch, known as <strong>Recombination</strong>, cleared the opaque plasma, allowing the first photons to travel freely. This ancient light, stretched by billions of years of cosmic expansion, is detected today as the <em>Cosmic Microwave Background (CMB)</em> radiation—the very afterglow of creation itself.
+                        </p>
+                        <h3>The Cosmic Dark Ages and Stellar Ignition</h3>
+                        <p>
+                            Following Recombination, the universe plunged into the <strong>Cosmic Dark Ages</strong>. For hundreds of millions of years, there was no visible light, only a sprawling, expanding fog of primordial hydrogen gas. Slowly, inexorably, the faint hand of gravity began drawing this gas into colossal webs and filaments across the void.
+                        </p>
+                        <p>
+                            At the ultra-dense intersections of these cosmic webs, the gas compressed until nuclear fusion ignited. These were the <em>Population III stars</em>—behemoths hundreds of times more massive than our Sun, burning with intense blue-white fury. Their ultraviolet radiation pierced and ionized the surrounding hydrogen fog, ending the Dark Ages and illuminating the universe for the first time. When these titanic, short-lived stars died in spectacular hypernovae, they seeded the dead cosmos with the first heavy elements—the very ashes that would eventually form planets, oceans, and life.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 2: EARTH'S GENESIS -->
+        <section id="earth" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24 border-t-glossCyan/30">
+                <div class="text-center mb-20 reveal-stagger">
+                    <h4 class="text-glossCyan font-semibold tracking-[0.2em] uppercase text-sm mb-4">Phase II</h4>
+                    <h2 class="font-display text-5xl md:text-8xl font-black text-white mb-6">The Pale Blue Dot</h2>
+                    <p class="font-sans text-xl md:text-2xl text-gray-300 font-light max-w-4xl mx-auto">
+                        From a violent, molten wasteland to a fragile oasis of biological complexity, the story of Earth is one of impossible odds and catastrophic transformations.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 content-body">
+                    <div class="liquid-glass p-10 rounded-[2.5rem] bg-white/5">
+                        <h3 class="mt-0 text-glossCyan text-3xl">The Hadean Eon</h3>
+                        <p>
+                            Around 4.5 billion years ago, our solar system was a violent disk of swirling dust and gas. Through gravitational accretion, Earth formed as a molten, radioactive hellscape. It was constantly bombarded by planetesimals, the most catastrophic being a Mars-sized body named Theia. This colossal impact liquefied the Earth's surface and ejected billions of tons of debris into orbit, which eventually coalesced to form our Moon—a celestial anchor that would stabilize Earth's axial tilt and make seasons possible.
+                        </p>
+                    </div>
+                    
+                    <div class="liquid-glass p-10 rounded-[2.5rem] bg-white/5">
+                        <h3 class="mt-0 text-white text-3xl">Abiogenesis & The Spark of Life</h3>
+                        <p>
+                            As the Earth cooled, water vapor condensed to form the first oceans. Deep within these primordial seas, near hydrothermal vents spewing mineral-rich heat, complex organic chemistry began to occur. Simple amino acids and lipids self-assembled into the first replicating RNA molecules. This transition from non-living chemistry to living biology—abiogenesis—remains one of the most profound and mysterious thresholds ever crossed in the universe.
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-2 liquid-glass p-12 rounded-[3rem] bg-white/5">
+                        <h3 class="mt-0 text-glossCyan text-3xl text-center">The Oxygen Catastrophe</h3>
+                        <p class="max-w-4xl mx-auto text-center">
+                            For billions of years, life consisted solely of single-celled anaerobic organisms. Then, a mutation occurred: Cyanobacteria developed the ability to photosynthesize, harvesting sunlight for energy and releasing a toxic byproduct—Oxygen. This free oxygen saturated the oceans and atmosphere, triggering a mass extinction of almost all obligate anaerobes. Yet, this "catastrophe" paved the way for aerobic respiration, an energy-rich metabolic process that eventually allowed for the evolution of multicellular life, complex animals, and human consciousness. We breathe the toxic exhaust of ancient microbes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 2.5: OBSERVATORY GALLERY (MYSTERIOUS IMAGES) -->
+        <section id="observatory" class="w-full flex items-center justify-center py-20 px-4 md:px-8 reveal-wrapper">
+            <div class="w-full max-w-7xl">
+                <div class="text-center mb-16 reveal-stagger">
+                    <h2 class="font-display text-4xl md:text-6xl font-black text-white mb-4">The Observable Void</h2>
+                    <p class="font-sans text-lg text-gray-400 font-light max-w-2xl mx-auto">
+                        Glimpses into the cosmic abyss captured by terrestrial and orbital observatories.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Image 1 -->
+                    <div class="liquid-glass rounded-3xl overflow-hidden group reveal relative h-80">
+                        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/800x600/020205/00f3ff?text=Milky+Way'" 
+                             alt="Milky Way from Earth" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                            <div>
+                                <h3 class="text-white font-display font-bold text-xl mb-1">Our Galactic Neighborhood</h3>
+                                <p class="text-gray-300 text-sm font-sans">The Milky Way stretching across the night sky, a dense band of billions of unresolved stars.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Image 2 -->
+                    <div class="liquid-glass rounded-3xl overflow-hidden group reveal relative h-80 transition-delay-100">
+                        <img src="https://images.unsplash.com/photo-1462332420958-a05d1e002413?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/800x600/020205/ff00d4?text=Nebula'" 
+                             alt="Deep Space Nebula" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                            <div>
+                                <h3 class="text-white font-display font-bold text-xl mb-1">Stellar Nurseries</h3>
+                                <p class="text-gray-300 text-sm font-sans">Colossal clouds of ionized gas and dust where new stars ignite into existence.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image 3 -->
+                    <div class="liquid-glass rounded-3xl overflow-hidden group reveal relative h-80 transition-delay-200">
+                        <img src="https://images.unsplash.com/photo-1537420327992-d6e192287183?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/800x600/020205/7000ff?text=Deep+Space'" 
+                             alt="Deep Space" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                            <div>
+                                <h3 class="text-white font-display font-bold text-xl mb-1">The Deep Void</h3>
+                                <p class="text-gray-300 text-sm font-sans">Looking deep into the universe, revealing countless distant galaxies billions of light-years away.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 2.7: DARK MATTER / DARK ENERGY -->
+        <section id="dark" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24 border-t-white/10 bg-black/50">
+                <div class="flex flex-col lg:flex-row gap-16">
+                    <div class="lg:w-1/2 content-body">
+                        <h4 class="text-gray-400 font-semibold tracking-[0.2em] uppercase text-sm mb-4">Interlude</h4>
+                        <h2 class="font-display text-4xl md:text-6xl font-black text-white mb-6">The Invisible Reality</h2>
+                        <p>
+                            Everything we can see, touch, and interact with—every star, planet, gas cloud, and living organism—makes up barely <strong>5% of the universe</strong>. The rest of reality is hidden in shadows, composed of exotic, undetectable physics that control the fate of the cosmos.
+                        </p>
+                        <h3 class="text-white">Dark Matter (27%)</h3>
+                        <p>
+                            When astronomers measured the rotational speeds of galaxies, they discovered a glaring anomaly: the outer edges were spinning far too fast. Based on the visible mass of stars, these galaxies should fly apart. The only explanation is a vast, invisible halo of "Dark Matter" enveloping every galaxy, providing the gravitational glue necessary to hold the spinning stars together. It does not interact with light or electromagnetism; it acts strictly through gravity.
+                        </p>
+                    </div>
+                    <div class="lg:w-1/2 content-body pt-8 lg:pt-0">
+                        <h3 class="text-gray-300 mt-0 lg:mt-24">Dark Energy (68%)</h3>
+                        <p>
+                            In 1998, observing distant supernovae, scientists discovered that the expansion of the universe is not slowing down due to gravity, as expected. It is <strong>accelerating</strong>. Some unknown, repulsive force is driving space itself apart at an ever-increasing rate. We call this Dark Energy.
+                        </p>
+                        <p>
+                            As the universe expands, more space is created, and with it, more Dark Energy. It is a runaway effect. Eventually, this repulsive force will tear galaxy clusters apart, then individual galaxies, then solar systems, and in the theoretical "Big Rip" scenario, it may eventually tear apart atoms and the fabric of spacetime itself.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 3: FERMI PARADOX -->
+        <section id="fermi" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24 border-t-glossPurple/30">
+                <div class="flex flex-col gap-16 text-center items-center">
+                    <div class="max-w-4xl reveal-stagger">
+                        <h4 class="text-glossPurple font-semibold tracking-[0.2em] uppercase text-sm mb-4">Phase III</h4>
+                        <h2 class="font-display text-4xl md:text-8xl font-black text-white mb-6">The Great Silence</h2>
+                        <p class="font-sans text-lg md:text-2xl text-gray-300 font-light mt-8">
+                            If the universe is nearly 14 billion years old and teeming with billions of habitable worlds, where is everybody?
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 content-body text-left w-full mt-8">
+                        <div class="liquid-glass p-10 rounded-3xl bg-white/5 border-none shadow-none transform transition-transform hover:scale-[1.02]">
+                            <h3 class="mt-0 text-glossPurple">The Drake Equation</h3>
+                            <p>
+                                Conceived by Frank Drake in 1961, this probabilistic argument estimates the number of active, communicative extraterrestrial civilizations in the Milky Way galaxy. By factoring in the rate of star formation, the fraction of those stars with planets, and the likelihood of life evolving into a technological state, the equation highlights a paradox: mathematically, the galaxy should be teeming with life.
+                            </p>
+                        </div>
+
+                        <div class="liquid-glass p-10 rounded-3xl bg-white/5 border-none shadow-none transform transition-transform hover:scale-[1.02]">
+                            <h3 class="mt-0 text-glossPurple">The Great Filter</h3>
+                            <p>
+                                The Great Filter theory suggests that there is a mandatory evolutionary step that is incredibly improbable or impossible to bypass. This filter could be behind us (abiogenesis is exceptionally rare) or ahead of us (technological civilizations inevitably destroy themselves via nuclear war, AI, or climate collapse before colonizing space).
+                            </p>
+                        </div>
+                        
+                        <div class="lg:col-span-2 liquid-glass p-12 rounded-3xl bg-white/5 border-none shadow-none text-center">
+                            <h3 class="mt-0 text-3xl">The Dark Forest Theory</h3>
+                            <p class="max-w-4xl mx-auto text-base md:text-lg">
+                                Popularized by Liu Cixin's science fiction, this chilling theory suggests that the universe is indeed full of advanced life, but it functions like a "dark forest." In a cosmos where resources are finite, intentions are unknowable, and technological leaps can happen rapidly, any civilization revealing its location becomes a target for preemptive destruction by older, paranoid species. <strong>To broadcast is to invite death. Silence is survival.</strong>
+                            </p>
+                        </div>
+                        
+                        <div class="liquid-glass p-10 rounded-3xl bg-white/5 border-none shadow-none transform transition-transform hover:scale-[1.02]">
+                            <h3 class="mt-0 text-glossCyan">The Zoo Hypothesis</h3>
+                            <p>
+                                Perhaps the galaxy is already fully colonized, and ancient civilizations are well aware of Earth. However, they observe us passively, much like humans observe animals in a nature preserve. We are quarantined—either to allow for natural, uncontaminated biological evolution, or because we are deemed too aggressively primitive to interact with the broader galactic community.
+                            </p>
+                        </div>
+                        
+                        <div class="liquid-glass p-10 rounded-3xl bg-white/5 border-none shadow-none transform transition-transform hover:scale-[1.02]">
+                            <h3 class="mt-0 text-glossMagenta">The Aestivation Hypothesis</h3>
+                            <p>
+                                Thermodynamics dictates that advanced computation is vastly more efficient in colder temperatures. A Type III civilization might have conquered their surroundings long ago and subsequently entered <em>aestivation</em> (a state of dormant sleep). They are waiting billions of years for the universe to expand and naturally cool down, increasing their supercomputing capabilities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 5: MEGASTRUCTURES -->
+        <section id="megastructures" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24 border-t-white/20">
+                <div class="text-center mb-20 reveal-stagger">
+                    <h4 class="text-glossCyan font-semibold tracking-[0.2em] uppercase text-sm mb-4">Phase V</h4>
+                    <h2 class="font-display text-5xl md:text-8xl font-black text-white mb-6">Stellar Engineering</h2>
+                    <p class="font-sans text-xl md:text-2xl text-gray-300 font-light max-w-4xl mx-auto">
+                        The mind-bending hypothetical constructs of Type II and Type III civilizations, turning the cosmos into an industrial playground.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 content-body">
+                    <div class="liquid-glass p-10 rounded-[2.5rem] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-glossCyan/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                        <h3 class="mt-0 relative z-10 text-glossCyan text-3xl">The Dyson Swarm</h3>
+                        <p class="relative z-10">
+                            Initially popularized by Freeman Dyson, a Dyson Sphere is a hypothetical megastructure that encompasses a star to capture a large percentage of its solar power output. 
+                        </p>
+                        <p class="relative z-10">
+                            Rather than a solid shell (which is gravitationally unstable and would shatter), a realistic implementation is a <em>Dyson Swarm</em>: billions of independent solar-collecting satellites and habitats orbiting in a dense formation, wirelessly transmitting energy via lasers to focal points. A civilization building this would dim their star's visible light while radiating massive amounts of infrared waste heat.
+                        </p>
+                    </div>
+                    
+                    <div class="liquid-glass p-10 rounded-[2.5rem] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-glossMagenta/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                        <h3 class="mt-0 relative z-10 text-glossMagenta text-3xl">The Matrioshka Brain</h3>
+                        <p class="relative z-10">
+                            An evolution of the Dyson Swarm concept, a Matrioshka Brain is an immense computational megastructure powered by the entire output of a star. It consists of multiple nested Dyson Spheres (like Russian nesting dolls).
+                        </p>
+                        <p class="relative z-10">
+                            The innermost swarm absorbs stellar energy, computes at extreme temperatures, and radiates waste heat. The next layer absorbs that specific waste heat to power its own computations at a lower temperature, and so on. Such a structure could possess enough processing power to simulate billions of entire universes, potentially housing the digitized consciousness of an entire immortal species.
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-2 liquid-glass p-12 rounded-[3rem] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-glossPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                        <div class="flex flex-col lg:flex-row gap-10">
+                            <div class="lg:w-1/2">
+                                <h3 class="mt-0 relative z-10 text-glossPurple text-3xl">Shkadov Thrusters</h3>
+                                <p class="relative z-10">
+                                    To avoid cosmic catastrophes (like an impending supernova or a collision with a rogue black hole), a Type II civilization might construct a <strong>Shkadov Thruster</strong>: a colossal parabolic mirror placed over one hemisphere of a star. The reflected radiation creates asymmetric thrust, slowly moving the star—and its entire orbiting solar system—across the galaxy over millions of years. They would literally drive their star system like a spaceship.
+                                </p>
+                            </div>
+                            <div class="lg:w-1/2">
+                                <h3 class="mt-0 relative z-10 text-white text-3xl">Ringworlds</h3>
+                                <p class="relative z-10">
+                                    Instead of living on planets, a species could dismantle the useless mass of their solar system to build a <strong>Ringworld</strong>. This is a massive engineered ribbon millions of miles wide, wrapping around the star at a habitable distance. By spinning the ring, they generate artificial gravity via centrifugal force. A single Ringworld could provide the livable surface area of three million Earths, complete with engineered atmospheres, oceans, and topographies.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- SECTION 5.5: THE COSMIC ENDGAME -->
+        <section id="endgame" class="min-h-screen w-full flex items-center justify-center py-40 px-4 md:px-8 reveal-wrapper">
+            <div class="liquid-glass reveal w-full max-w-7xl p-10 md:p-24 border-t-red-900/30">
+                <div class="text-center mb-20 reveal-stagger">
+                    <h4 class="text-red-500 font-semibold tracking-[0.2em] uppercase text-sm mb-4">Phase VII</h4>
+                    <h2 class="font-display text-5xl md:text-8xl font-black text-white mb-6">The Cosmic Twilight</h2>
+                    <p class="font-sans text-xl md:text-2xl text-gray-300 font-light max-w-4xl mx-auto">
+                        How does the story end? If Dark Energy continues to accelerate the expansion of the universe, our far future is one of unimaginable cold, isolation, and absolute darkness.
+                    </p>
+                </div>
+                
+                <div class="flex flex-col gap-12 content-body">
+                    <div class="liquid-glass p-10 rounded-[2.5rem] bg-gradient-to-br from-black to-red-950/20 border-red-500/20">
+                        <h3 class="mt-0 text-red-400 text-3xl">The Degenerate Era</h3>
+                        <p>
+                            Trillions of years from now, the very last stars in the universe will exhaust their nuclear fuel and die out. The cosmos will be littered with glowing stellar corpses: white dwarfs, neutron stars, and black holes. The universe will plunge into an eternal night, lit only by the faint, fleeting glow of cooling embers. Due to the expansion of space, the night sky of any remaining worlds will be completely black, devoid of neighboring galaxies as they will have receded far beyond the observable horizon.
+                        </p>
+                    </div>
+                    
+                    <div class="liquid-glass p-10 rounded-[2.5rem] bg-gradient-to-br from-black to-red-950/20 border-red-500/20">
+                        <h3 class="mt-0 text-red-500 text-3xl">The Black Hole Era & Heat Death</h3>
+                        <p>
+                            Eventually, atomic bonds will fail, and even the protons that make up matter may decay into subatomic particles. The only macroscopic structures left will be supermassive black holes. Over uncounted googols of years ($10^{100}$ years), even these cosmic titans will slowly evaporate via <strong>Hawking Radiation</strong>, flashing briefly before disappearing into the void. 
+                        </p>
+                        <p>
+                            When the last black hole evaporates, the universe will reach <em>Maximum Entropy</em> (The Heat Death). Energy will be perfectly, uniformly distributed across an infinite expanse, rendering biological life, mechanics, and computation fundamentally impossible. Time itself will lose all meaning, as nothing will ever happen again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="h-64 w-full"></div>
+
+        <!-- CONCLUSION -->
+        <section class="w-full flex items-center justify-center py-40 px-4 reveal-wrapper min-h-screen">
+            <div class="reveal-scale text-center max-w-5xl liquid-glass p-16 rounded-[3rem] border-glossCyan/30">
+                <h2 class="font-display text-4xl md:text-6xl font-bold text-white mb-10">The Cosmic Perspective</h2>
+                <p class="text-xl md:text-2xl text-gray-300 font-light leading-relaxed mb-0">
+                    We exist in a brief window of profound clarity. The universe birthed itself from nothing, forged heavy atoms in the hearts of dying stars, and coalesced those atoms into a rock that eventually woke up to gaze back at the void. Whether we are a lonely spark in the dark forest, or the embryonic stage of a Type III civilization, our responsibility is the same: to survive, to understand, and to preserve the fragile light of consciousness against the infinite dark.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Sleek Liquid-Glass Footer -->
+    <footer class="w-full pb-12 flex justify-center relative z-20 reveal-wrapper">
+        <div class="reveal liquid-glass px-16 py-6 rounded-full flex items-center gap-6 hover:shadow-[0_0_40px_rgba(0,243,255,0.5)] transition-shadow duration-500 cursor-default bg-black/40">
+            <div class="w-4 h-4 rounded-full bg-glossCyan animate-pulse shadow-[0_0_15px_#00f3ff]"></div>
+            <p class="font-display text-white text-lg md:text-xl tracking-[0.4em] uppercase font-bold m-0">
+                Researcher: <span class="text-glossCyan">Prasurjya</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Application Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --------------------------------------------------------
+            // 1. Intersection Observer for Apple-like Scroll Animations
+            // --------------------------------------------------------
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -15% 0px',
+                threshold: 0.1 
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal, .reveal-scale, .reveal-stagger');
+            revealElements.forEach(el => observer.observe(el));
+
+            setTimeout(() => {
+                document.querySelectorAll('#hero .reveal-scale').forEach(el => el.classList.add('active'));
+            }, 100);
+
+            // --------------------------------------------------------
+            // 2. Liquid Navbar Scroll Effect
+            // --------------------------------------------------------
+            const navbar = document.getElementById('navbar');
+            const navInner = navbar.querySelector('div');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    navInner.style.background = 'rgba(255, 255, 255, 0.05)';
+                    navInner.style.boxShadow = '0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3)';
+                    navInner.style.backdropFilter = 'blur(40px)';
+                } else {
+                    navInner.style.background = 'rgba(255, 255, 255, 0.02)';
+                    navInner.style.boxShadow = 'none';
+                    navInner.style.backdropFilter = 'blur(20px)';
+                }
+            });
+
+            // --------------------------------------------------------
+            // 3. Three.js: IMMERSIVE FLY-THROUGH ANIMATION
+            // --------------------------------------------------------
+            const canvas = document.getElementById('three-canvas');
+            const scene = new THREE.Scene();
+            
+            // Fog to fade out stars in the far distance
+            scene.fog = new THREE.FogExp2(0x020205, 0.0008);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            
+            const renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                alpha: true,
+                antialias: true
+            });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create a MASSIVE, elongated starfield for the fly-through
+            const starCount = 35000;
+            const starGeometry = new THREE.BufferGeometry();
+            
+            const starPos = new Float32Array(starCount * 3);
+            const starColors = new Float32Array(starCount * 3);
+            const starSizes = new Float32Array(starCount);
+
+            // Realistic Stellar Palette (O, B, A, F, G, K, M spectral classes)
+            const colorPalette = [
+                new THREE.Color(0x9db4ff), // O-type: Deep Blue
+                new THREE.Color(0xa2c0ff), // B-type: Blue-white
+                new THREE.Color(0xffffff), // A-type: Pure White
+                new THREE.Color(0xfff4e8), // F-type: Yellow-white
+                new THREE.Color(0xffddb4), // G-type: Yellow (like our Sun)
+                new THREE.Color(0xffbd6f), // K-type: Orange
+                new THREE.Color(0xff9d5c)  // M-type: Red
+            ];
+
+            const zSpread = 35000; 
+
+            for(let i = 0; i < starCount; i++) {
+                const radius = 100 + Math.random() * 2500;
+                const theta = 2 * Math.PI * Math.random();
+                
+                let x = radius * Math.cos(theta);
+                let y = radius * Math.sin(theta);
+                
+                if(Math.random() > 0.5) {
+                    x *= 1.5;
+                    y *= 0.3;
+                }
+
+                let z = 1000 - Math.random() * zSpread;
+
+                starPos[i*3] = x;
+                starPos[i*3+1] = y;
+                starPos[i*3+2] = z;
+
+                const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                
+                starColors[i*3] = c.r;
+                starColors[i*3+1] = c.g;
+                starColors[i*3+2] = c.b;
+
+                starSizes[i] = Math.random() * 20.0 + 5.0; 
+            }
+
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+            starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+
+            const starMaterial = new THREE.ShaderMaterial({
+                vertexShader: `
+                    attribute float size;
+                    varying vec3 vColor;
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (800.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    void main() {
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if (ll > 0.5) discard;
+                        float dist = ll * 2.0;
+                        float glow = exp(-dist * 4.0); 
+                        float core = exp(-dist * 15.0); 
+                        vec3 finalColor = (vColor * glow) + (vec3(1.0) * core);
+                        gl_FragColor = vec4(finalColor, glow);
+                    }
+                `,
+                transparent: true,
+                vertexColors: true,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            const starMesh = new THREE.Points(starGeometry, starMaterial);
+            scene.add(starMesh);
+
+            // --- BLACK HOLE IMPLEMENTATION ---
+            const blackHoleGroup = new THREE.Group();
+            blackHoleGroup.position.set(400, 200, 0); 
+            
+            const ehGeo = new THREE.SphereGeometry(180, 64, 64);
+            const ehMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const eventHorizon = new THREE.Mesh(ehGeo, ehMat);
+            blackHoleGroup.add(eventHorizon);
+
+            const diskGeo = new THREE.RingGeometry(220, 700, 128);
+            const diskMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPos;
+                    void main() {
+                        vUv = uv;
+                        vPos = position;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPos;
+                    void main() {
+                        float dist = length(vPos.xy);
+                        float normDist = (dist - 220.0) / 480.0;
+                        vec3 colorInner = vec3(1.0, 0.4, 0.0);
+                        vec3 colorOuter = vec3(0.4, 0.0, 1.0);
+                        vec3 color = mix(colorInner, colorOuter, normDist);
+                        float alpha = smoothstep(1.0, 0.7, normDist) * smoothstep(0.0, 0.1, normDist);
+                        float angle = atan(vPos.y, vPos.x);
+                        float streaks = sin(angle * 40.0) * 0.15 + 0.85;
+                        gl_FragColor = vec4(color * streaks, alpha * 0.9);
+                    }
+                `,
+                side: THREE.DoubleSide,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const accretionDisk = new THREE.Mesh(diskGeo, diskMat);
+            accretionDisk.rotation.x = Math.PI / 2.1;
+            accretionDisk.rotation.y = Math.PI / 10;
+            blackHoleGroup.add(accretionDisk);
+
+            const auraGeo = new THREE.SphereGeometry(200, 64, 64);
+            const auraMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec3 vNormal;
+                    void main() {
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vNormal;
+                    void main() {
+                        float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 3.0);
+                        gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0) * intensity * 1.5;
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                side: THREE.BackSide,
+                depthWrite: false
+            });
+            const aura = new THREE.Mesh(auraGeo, auraMat);
+            blackHoleGroup.add(aura);
+            scene.add(blackHoleGroup);
+
+            // --- INTERMEDIATE SOLAR SYSTEM (SUN, JUPITER, SATURN) ---
+            
+            // 1. THE SUN (Placed mid-journey)
+            const sunGroup = new THREE.Group();
+            sunGroup.position.set(-600, 300, -6000);
+            
+            const sunGeo = new THREE.SphereGeometry(350, 64, 64);
+            const sunMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    float random(in vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
+                    float noise(in vec2 st) {
+                        vec2 i = floor(st); vec2 f = fract(st);
+                        float a = random(i); float b = random(i + vec2(1.0, 0.0));
+                        float c = random(i + vec2(0.0, 1.0)); float d = random(i + vec2(1.0, 1.0));
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+                    void main() {
+                        float n = noise(vUv * 6.0);
+                        vec3 coreColor = vec3(1.0, 0.9, 0.3);
+                        vec3 flareColor = vec3(1.0, 0.3, 0.0);
+                        vec3 color = mix(coreColor, flareColor, n);
+                        gl_FragColor = vec4(color * 1.8, 1.0);
+                    }
+                `
+            });
+            const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+            sunGroup.add(sunMesh);
+            
+            // Sun Corona Glow
+            const sunCoronaGeo = new THREE.SphereGeometry(390, 64, 64);
+            const sunCoronaMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec3 vNormal;
+                    void main() {
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vNormal;
+                    void main() {
+                        float intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+                        gl_FragColor = vec4(1.0, 0.6, 0.1, 1.0) * intensity * 1.5;
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                side: THREE.BackSide,
+                depthWrite: false
+            });
+            sunGroup.add(new THREE.Mesh(sunCoronaGeo, sunCoronaMat));
+            scene.add(sunGroup);
+
+            // 2. JUPITER (Gas Giant)
+            const jupiterGroup = new THREE.Group();
+            jupiterGroup.position.set(500, -250, -11000);
+            
+            const jupGeo = new THREE.SphereGeometry(180, 64, 64);
+            const jupMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        // Banded stripe pattern
+                        float bands = sin(vUv.y * 40.0) * 0.5 + 0.5;
+                        vec3 c1 = vec3(0.8, 0.6, 0.4);
+                        vec3 c2 = vec3(0.5, 0.35, 0.2);
+                        vec3 color = mix(c1, c2, bands);
+                        
+                        vec3 lightDir = normalize(vec3(1.0, 0.5, 0.5));
+                        float diff = max(dot(vNormal, lightDir), 0.0);
+                        gl_FragColor = vec4(color * (diff + 0.2), 1.0);
+                    }
+                `
+            });
+            jupiterGroup.add(new THREE.Mesh(jupGeo, jupMat));
+            scene.add(jupiterGroup);
+
+            // 3. SATURN (Ringed Gas Giant)
+            const saturnGroup = new THREE.Group();
+            saturnGroup.position.set(-450, 150, -14000);
+            
+            const satGeo = new THREE.SphereGeometry(140, 64, 64);
+            const satMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        float bands = sin(vUv.y * 30.0) * 0.5 + 0.5;
+                        vec3 color = mix(vec3(0.9, 0.8, 0.6), vec3(0.7, 0.6, 0.4), bands);
+                        vec3 lightDir = normalize(vec3(1.0, 0.5, 0.5));
+                        float diff = max(dot(vNormal, lightDir), 0.0);
+                        gl_FragColor = vec4(color * (diff + 0.2), 1.0);
+                    }
+                `
+            });
+            saturnGroup.add(new THREE.Mesh(satGeo, satMat));
+
+            // Saturn Rings
+            const ringGeo = new THREE.RingGeometry(180, 320, 64);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0xd4b886,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8
+            });
+            const saturnRing = new THREE.Mesh(ringGeo, ringMat);
+            saturnRing.rotation.x = Math.PI / 2.2;
+            saturnGroup.add(saturnRing);
+            scene.add(saturnGroup);
+
+            // --- END SOLAR SYSTEM ---
+
+            // --- PROCEDURAL 3D EARTH (AT THE END) ---
+            const earthGroup = new THREE.Group();
+            earthGroup.position.set(-200, -100, -17000); 
+
+            const earthGeo = new THREE.SphereGeometry(250, 64, 64);
+            const earthMat = new THREE.ShaderMaterial({
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    float random(in vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
+                    float noise(in vec2 st) {
+                        vec2 i = floor(st); vec2 f = fract(st);
+                        float a = random(i); float b = random(i + vec2(1.0, 0.0));
+                        float c = random(i + vec2(0.0, 1.0)); float d = random(i + vec2(1.0, 1.0));
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+                    float fbm(in vec2 st) {
+                        float value = 0.0; float amplitude = 0.5;
+                        for (int i = 0; i < 5; i++) {
+                            value += amplitude * noise(st);
+                            st *= 2.0; amplitude *= 0.5;
+                        }
+                        return value;
+                    }
+                    void main() {
+                        float n = fbm(vUv * 12.0);
+                        vec3 waterColor = vec3(0.02, 0.15, 0.4);
+                        vec3 shallowWater = vec3(0.1, 0.4, 0.6);
+                        vec3 landColor = vec3(0.05, 0.4, 0.15);
+                        vec3 mountainColor = vec3(0.4, 0.3, 0.2);
+                        vec3 color = mix(waterColor, shallowWater, smoothstep(0.3, 0.5, n));
+                        color = mix(color, landColor, smoothstep(0.48, 0.52, n));
+                        color = mix(color, mountainColor, smoothstep(0.7, 0.9, n));
+                        vec3 lightDir = normalize(vec3(1.0, 0.5, 0.5));
+                        float diff = max(dot(vNormal, lightDir), 0.0);
+                        float rim = 1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0);
+                        rim = smoothstep(0.6, 1.0, rim);
+                        vec3 finalColor = (color * diff) + (color * 0.1) + (vec3(0.2, 0.5, 1.0) * rim * 0.9);
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `
+            });
+            const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+            earthGroup.add(earthMesh);
+
+            const cloudGeo = new THREE.SphereGeometry(253, 64, 64);
+            const cloudMat = new THREE.ShaderMaterial({
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                vertexShader: earthMat.vertexShader,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormal;
+                    float random(in vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
+                    float noise(in vec2 st) {
+                        vec2 i = floor(st); vec2 f = fract(st);
+                        float a = random(i); float b = random(i + vec2(1.0, 0.0));
+                        float c = random(i + vec2(0.0, 1.0)); float d = random(i + vec2(1.0, 1.0));
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+                    float fbm(in vec2 st) {
+                        float value = 0.0; float amplitude = 0.5;
+                        for (int i = 0; i < 4; i++) {
+                            value += amplitude * noise(st);
+                            st *= 2.0; amplitude *= 0.5;
+                        }
+                        return value;
+                    }
+                    void main() {
+                        float n = fbm(vUv * 8.0);
+                        float alpha = smoothstep(0.4, 0.7, n);
+                        vec3 lightDir = normalize(vec3(1.0, 0.5, 0.5));
+                        float diff = max(dot(vNormal, lightDir), 0.0);
+                        gl_FragColor = vec4(vec3(1.0) * diff, alpha * 0.8);
+                    }
+                `
+            });
+            const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+            earthGroup.add(cloudMesh);
+            scene.add(earthGroup);
+
+            // Animation variables
+            let targetScrollY = window.scrollY;
+            let currentScrollY = window.scrollY;
+            let mouseX = 0;
+            let mouseY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - windowHalfX) * 0.001;
+                mouseY = (e.clientY - windowHalfY) * 0.001;
+            });
+
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    mouseX = (e.touches[0].clientX - windowHalfX) * 0.001;
+                    mouseY = (e.touches[0].clientY - windowHalfY) * 0.001;
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    mouseX = (e.touches[0].clientX - windowHalfX) * 0.001;
+                    mouseY = (e.touches[0].clientY - windowHalfY) * 0.001;
+                }
+            }, { passive: true });
+
+            window.addEventListener('scroll', () => {
+                targetScrollY = window.scrollY;
+            });
+
+            const clock = new THREE.Clock();
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = clock.getElapsedTime();
+
+                currentScrollY += (targetScrollY - currentScrollY) * 0.05;
+                camera.position.z = 1000 - (currentScrollY * 1.2);
+
+                camera.position.x += (mouseX * 300 - camera.position.x) * 0.02;
+                camera.position.y += (-mouseY * 300 - camera.position.y) * 0.02;
+
+                starMesh.rotation.z = time * 0.05;
+
+                // Animate Black Hole
+                if (typeof accretionDisk !== 'undefined') {
+                    accretionDisk.rotation.z = -time * 0.4;
+                    blackHoleGroup.position.y = 200 + Math.sin(time) * 30;
+                }
+
+                // Animate Sun, Jupiter, Saturn
+                if (typeof sunGroup !== 'undefined') {
+                    sunMesh.rotation.y = time * 0.1;
+                }
+                if (typeof jupiterGroup !== 'undefined') {
+                    jupiterGroup.rotation.y = time * 0.2;
+                }
+                if (typeof saturnGroup !== 'undefined') {
+                    saturnGroup.rotation.y = time * 0.15;
+                    saturnRing.rotation.z = time * 0.05;
+                }
+
+                // Animate Earth
+                if (typeof earthGroup !== 'undefined') {
+                    earthMesh.rotation.y = time * 0.05;
+                    cloudMesh.rotation.y = time * 0.06;
+                    earthGroup.position.y = -100 + Math.sin(time * 0.5) * 20;
+                }
+
+                camera.lookAt(camera.position.x, camera.position.y, camera.position.z - 1000);
+                renderer.render(scene, camera);
+            }
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+        });
+    </script>
+</body>
+</html>
